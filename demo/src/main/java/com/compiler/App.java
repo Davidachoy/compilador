@@ -13,6 +13,7 @@ public class App {
     public static void main(String[] args) {
 
         String archivo = "prueba.txt";
+
         try {
             BufferedReader reader = new BufferedReader(new FileReader(archivo));
             StringBuilder outputBuilder = new StringBuilder();
@@ -52,9 +53,9 @@ public class App {
             String symbolTableOutput = p.getSymbolTable();
             String sintactiOutput = outputBuilder.toString();
 
-            writeToFile(symbolTableOutput, "Tabla de simbolos");
-            writeToFile(cod3DOutput, "Codigo3D");
-            writeToFile(sintactiOutput, "Analisis");
+            writeToFile(symbolTableOutput, "Tabla de simbolos.txt");
+            writeToFile(cod3DOutput, "Codigo3D.txt");
+            writeToFile(sintactiOutput, "Analisis.txt");
 
             reader.close();
         } catch(Exception e) {
