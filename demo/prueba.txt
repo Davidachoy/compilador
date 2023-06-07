@@ -5,9 +5,15 @@ int main(){
 int prueba2 (float  d){
 
     if (2<6){
-        int l =45$
+
+        for (int i$ i>5 $ ++i ){
+            int a$
+        }
+
     }elif (2>1){
         int a = 3$
+    }else {
+        int a$
     }
 
     }

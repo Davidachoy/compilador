@@ -11,8 +11,38 @@ if_1_begin:
     if t2 goto L1
     goto L2
 L1:
+
+
+for_1_begin:
     dataInt i
-    goto if_1_end
+    i = 0
+_main_for_1_condicion:
+    t3 = i
+    t4 = b
+    t5 = t3 <= t4
+    if t5 goto _main_for_1_bloque
+    goto _main_for_1_end
+_main_for_1_alter:
+t9 = i
+t10 = t9 + 1
+i = t10
+goto _main_for_1_condicion
+_main_for_1_bloque:
+t6 = a
+param t6
+t7 = b
+param t7
+t8 = call potencia, 2
+p = t8
+goto _main_for_1_alter
+if_1_end:
+
+
+
+
+
+
+
 L2:
     t11 = b
     t12 = t11 < 10

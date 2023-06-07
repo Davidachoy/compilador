@@ -346,17 +346,38 @@ Elif_Branch ::=  ELIF LPAREN expr:e
 Else_Branch ::= ELSE LBRACE
               {:
                      symbolTable.pushScope();
-              :} StatementList RBRACE 
+                     cod3D.append("\nL"+currentLabel+++":");
+              :}
+              StatementList RBRACE
+              {:
+                     cod3D.append("\nL"+currentLabel+++":");      
+                     symbolTable.popScope();
+              :}
               |  ;
 
 
 //for
 
-For_Structure ::= FOR LPAREN Cond_for DOLAR expr DOLAR inc_for RPAREN LBRACE {: symbolTable.pushScope(); :}  StatementList RBRACE {: symbolTable.popScope(); :} ;
+For_Structure ::=    FOR
+                     {:
+                            cod3D.append("\nfor_"+currentFor+"_begin:");
+                            symbolTable.pushScope(); 
+                     :}
+                     LPAREN Cond_for
+                     {:
+                            cod3D.append("\nfor_"+currentFor+"_condition:");
+                    
+                     :}
+                     DOLAR expr:e
+                     {:
+                            String[] partesExpr1 = e.toString().split("::");
+                            cod3D.append("\nif "+partesExpr1[1]+" goto L"+currentLabel++);
+                            cod3D.append("\ngoto for_"+currentFor+"_end");
+                            cod3D.append("\nfor_"+currentFor+"_alter");
+                     :}
+                     DOLAR inc_for RPAREN LBRACE  StatementList RBRACE {: symbolTable.popScope(); :} ;
 
-inc_for  ::=     INCREMENT IDENTIFIER
-               | DECREMENT IDENTIFIER
-               | Assign;
+inc_for  ::=     factor;
 
 Cond_for ::=     Declaration
                | Assign;
@@ -436,7 +457,7 @@ expr_log ::=     expr_bin:exb {:RESULT = exb;:}
                             String[] partesExpr = el.toString().split("::");
                             String temp = "t"+(currentTemp++);
                             cod3D.append("\n"+temp+" = NOT "+partesExpr[1]);
-                            RESULT = "!"+partesExpr[0]+"::"+temp;
+                            RESULT = "!"+partesExpr[0]+"::"+temp;//partesExpr[2]
                      :};
 
 expr_bin ::=     term:t {:RESULT = t;:}
@@ -459,11 +480,20 @@ term ::=  factor:f {:RESULT = f;:}
                      RESULT = partesExpr1[0]+opm+partesExpr2[0]+"::"+temp;
               :};
 
+/***
+                     if(partesExpr2[2].equales(partesExpr1[2])){
+                            String temp = "t"+(currentTemp++);
+                            cod3D.append("\n"+temp+" = "+partesExpr1[1]+" "+opm+" "+partesExpr2[1]);
+                            RESULT = partesExpr1[0]+opm+partesExpr2[0]+"::"+temp::partesExpr2[2];
+                     }else{
+                            report_semantic_error("error",e2)
+*/
+
 factor ::=     INTEGER_LITERAL:intL      
               {:
               String temp = "t" + (currentTemp++);
               cod3D.append("\n" + temp + " = " + intL);
-              RESULT = intL.toString() + "::" + temp;
+              RESULT = intL.toString() + "::" +temp+"::int";
               :}
               |  FLOAT_LITERAL:floatL      
               {:
@@ -505,10 +535,21 @@ factor ::=     INTEGER_LITERAL:intL
                      cod3D.append("\n" + temp + " = " + id);
                      RESULT = id + "::" + temp;;
               }
-              
 
               :}
-              |  op_unario factor
+              |  op_unario:opu factor:f
+              {:
+                     String temp = "t" + (currentTemp++);
+                     String[] partesExpr1 = f.toString().split("::");
+                     cod3D.append("\n" + temp + " = " + partesExpr1[0]);
+                     String tempTemp = temp;
+                     temp = "t" + (currentTemp++);
+                     if (opu.toString().equals("++")){
+                            cod3D.append("\n" + temp + " = " + tempTemp+" + 1"+);
+                     }
+
+              :}
+
               |  LPAREN expr:e RPAREN     {:RESULT = e;:}
               |  Array_expr
               |  FunctionCall:id
