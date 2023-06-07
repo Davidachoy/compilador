@@ -1,0 +1,54 @@
+****************************
+_main_begin:
+dataInt p
+dataInt b
+t0 = b
+param t0
+call read,1
+if_1_begin:
+    t1 = b
+    t2 = t1 >= 10
+    if t2 goto L1
+    goto L2
+L1:
+    dataInt i
+    goto if_1_end
+L2:
+    t11 = b
+    t12 = t11 < 10
+    if t12 goto L3
+    goto L4
+L3:
+    p = 2
+    goto if_1_end
+
+L4:
+L5:
+    t13 = b
+    p = t13
+L6:
+if_1_end:
+
+t14 = p
+return t14
+_main_end:
+
+
+_potencia_begin:
+dataInt a
+a = param[0]
+dataInt b
+b = param[1]
+t1 = b
+t2 = a
+t3 = t1 ** t2
+return t3
+_potencia_end:
+
+
+
+
+
+
+
+

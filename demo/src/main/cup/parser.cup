@@ -13,6 +13,13 @@ action code {:
        StringBuffer cod3D = new StringBuffer();
        int currentTemp = 1;
        int currentLabel = 1;
+       int currentIf = 1;
+       int currentFor = 1;
+       int currentWhile = 1;
+
+
+
+
        public void imprimirCod3D() {
               System.out.println(cod3D.toString());
        }
@@ -153,19 +160,26 @@ Main ::=      INT MAIN
 Function ::= Function_id:id LPAREN Parameters RPAREN LBRACE {: symbolTable.pushScope(); :} StatementList RBRACE
               {: 
                      symbolTable.popScope();
+                     cod3D.append("\n_"+ ((FunctionID)id).getId()+"_end: ");
                      if (symbolTable.getSymbol(id.toString()) == null) {
                             SymbolInfo info = new SymbolInfo();
                             info.setType("function");
                             symbolTable.addSymbol(((FunctionID)id).getId(),info); 
                      }else {
-                    report_semantic_error("Funcion ya definida: " + id.toString(), id);
-                       } :};
+                            report_semantic_error("Funcion ya definida: " + id.toString(), id);
+                     } 
+              :};
                     
                      
 //_main_begin:
 
 Function_id ::= Type:t IDENTIFIER:id 
-               {: RESULT = new FunctionID(t.toString(), id.toString()); :};
+               {:
+                     RESULT = new FunctionID(t.toString(), id.toString());
+                     cod3D.append("\n_"+ id.toString()+"_begin: ");
+                     
+
+              :};
 
 Parameters ::=  Param
                 |Parameters COMMA Param
@@ -276,17 +290,56 @@ ControlStructure ::=   If_Structure
 
 //if
 
-If_Structure ::= If_Branch Elif_Structure Else_Branch;
+If_Structure ::= If_Branch Elif_Structure Else_Branch
+              {:
+                     cod3D.append("\nif_"+currentIf+++"_end:");        
+
+              :};
 
 
-If_Branch ::= IF LPAREN expr RPAREN LBRACE StatementList RBRACE;
+If_Branch ::= IF LPAREN
+              {: 
+                     cod3D.append("\n_if_"+currentIf+"_begin:");
+              :}
+               expr:e RPAREN 
+              {:
+                     symbolTable.pushScope();
+                     String[] partesExpr1 = e.toString().split("::");
+                     int tempLabel = currentLabel;
+                     cod3D.append("\nif "+partesExpr1[1]+" goto L"+currentLabel++);
+                     cod3D.append("\ngoto L"+currentLabel);
+                     cod3D.append("\nL"+tempLabel+":");
+              :}
+              LBRACE StatementList RBRACE
+              {:
+                     symbolTable.popScope();
+                     cod3D.append("\ngoto if_"+currentIf+"_end:");        
+                     cod3D.append("\nL"+currentLabel+++":");        
+              :};
 
 Elif_Structure ::=      Elif_Structure Elif_Branch
                      |  ;
 
-Elif_Branch ::=  ELIF LPAREN expr RPAREN LBRACE StatementList RBRACE;
+Elif_Branch ::=  ELIF LPAREN expr:e
+              {:
+                     symbolTable.pushScope();
+                     String[] partesExpr1 = e.toString().split("::");
+                     int tempLabel = currentLabel;
+                     cod3D.append("\nif "+partesExpr1[1]+" goto L"+currentLabel++);
+                     cod3D.append("\ngoto L"+currentLabel);
+                     cod3D.append("\nL"+tempLabel+":");
+              :}
+               RPAREN LBRACE StatementList RBRACE
+               {:
+                      symbolTable.popScope();
+                      cod3D.append("\ngoto if_"+currentIf+"_end:");        
+                      cod3D.append("\nL"+currentLabel+++":");      
+               :};
 
-Else_Branch ::= ELSE LBRACE StatementList RBRACE 
+Else_Branch ::= ELSE LBRACE
+              {:
+                     symbolTable.pushScope();
+              :} StatementList RBRACE 
               |  ;
 
 
