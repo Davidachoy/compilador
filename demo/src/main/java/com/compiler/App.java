@@ -23,6 +23,7 @@ public class App {
                 List<Symbol> tokens = new ArrayList<Symbol>();
                 Symbol symbol = lexer.next_token();
                 while (symbol.sym != ParserSym.EOF) {
+                    //prueba
                     tokens.add(symbol);
                     symbol = lexer.next_token();
                 }

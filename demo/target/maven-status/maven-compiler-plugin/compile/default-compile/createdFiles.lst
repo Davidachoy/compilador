@@ -1,4 +1,12 @@
+com\compiler\FunctionID.class
+com\compiler\App.class
 com\compiler\Parser.class
 com\compiler\ParserSym.class
+com\compiler\SymbolInfo.class
+com\compiler\Expression.class
 com\compiler\Lexer.class
 com\compiler\Parser$CUP$Parser$actions.class
+com\compiler\Declaration.class
+com\compiler\IfBranch.class
+com\compiler\SymbolTable.class
+com\compiler\Type.class
