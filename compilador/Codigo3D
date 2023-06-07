@@ -1,0 +1,17 @@
+
+_main_begin: 
+data_int a
+data_int b
+_main_end: 
+data_int e
+t1 = e
+data_int e
+data_int a
+t2 = 32
+t3 = 2
+t4 = t2 + t3
+a = t4
+t5 = 2
+t6 = 6
+t7 = t5 < t6
+t8 = 45

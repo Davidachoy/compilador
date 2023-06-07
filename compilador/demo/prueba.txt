@@ -1,0 +1,22 @@
+int main(){
+
+    int a$
+    int b$
+}
+
+int prueba (float  d){
+
+    int e$
+    int a = e$
+    }
+
+int prueba2 (float  d){
+
+    int e$
+    int a$
+    a= 32 + (2)$
+    if (2<6){
+        int l =45$
+    }
+
+    }
