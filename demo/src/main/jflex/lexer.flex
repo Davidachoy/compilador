@@ -1,5 +1,8 @@
 package com.compiler;
 import java_cup.runtime.*;
+import java.util.List;
+import java.util.ArrayList;
+
 
 %%
 
@@ -20,6 +23,13 @@ import java_cup.runtime.*;
     }
     private Symbol symbol(int type, Object value) {
     return new Symbol(type, yyline, yycolumn, value);
+    }
+
+    List<Symbol> tokens = new ArrayList<>();
+
+    public List<Symbol> getTokens() {
+    return tokens;
+    
     }
 %}
 
@@ -53,61 +63,63 @@ CommentContent       = ( [^*] | \*+ [^/*] )*
 
 <YYINITIAL> {
     /* keywords */
-    "if"     { return symbol(ParserSym.IF, yytext()); }
-    "else"   { return symbol(ParserSym.ELSE, yytext()); }
-    "while"  { return symbol(ParserSym.WHILE, yytext()); }
-    "for"    { return symbol(ParserSym.FOR, yytext()); }
-    "int"    { return symbol(ParserSym.INT, yytext()); }
-    "return" { return symbol(ParserSym.RETURN, yytext()); }
-    "float"  { return symbol(ParserSym.FLOAT, yytext()); }
-    "bool"   { return symbol(ParserSym.BOOL, yytext()); }
-    "char"   { return symbol(ParserSym.CHAR, yytext()); }
-    "string" { return symbol(ParserSym.STRING, yytext()); }
-    "elif"   { return symbol(ParserSym.ELIF, yytext()); }
-    "do"     { return symbol(ParserSym.DO, yytext()); }
-    "read"   { return symbol(ParserSym.READ, yytext()); }
-    "print"  { return symbol(ParserSym.PRINT, yytext()); }
-    "main"   { return symbol(ParserSym.MAIN, yytext()); }
-    "true"   { return symbol(ParserSym.TRUE, yytext()); }
-    "break"  { return symbol(ParserSym.BREAK, yytext()); }
-    "false"  { return symbol(ParserSym.FALSE, yytext()); }
-    "$"      { return symbol(ParserSym.DOLAR, yytext()); }
-    "not"    { return symbol(ParserSym.NOT, yytext()); }
-    "!"      { return symbol(ParserSym.NOT, yytext()); }
+    "if"     { Symbol s = symbol(ParserSym.IF, yytext()); tokens.add(s); return s; }
+    "else"   { Symbol s = symbol(ParserSym.ELSE, yytext()); tokens.add(s); return s; }
+    "while"  { Symbol s = symbol(ParserSym.WHILE, yytext()); tokens.add(s); return s; }
+    "for"    { Symbol s = symbol(ParserSym.FOR, yytext()); tokens.add(s); return s; }
+    "int"    { Symbol s = symbol(ParserSym.INT, yytext()); tokens.add(s); return s; }
+    "return" { Symbol s = symbol(ParserSym.RETURN, yytext()); tokens.add(s); return s; }
+    "float"  { Symbol s = symbol(ParserSym.FLOAT, yytext()); tokens.add(s); return s; }
+    "bool"   { Symbol s = symbol(ParserSym.BOOL, yytext()); tokens.add(s); return s; }
+    "char"   { Symbol s = symbol(ParserSym.CHAR, yytext()); tokens.add(s); return s; }
+    "string" { Symbol s = symbol(ParserSym.STRING, yytext()); tokens.add(s); return s; }
+    "elif"   { Symbol s = symbol(ParserSym.ELIF, yytext()); tokens.add(s); return s; }
+    "do"     { Symbol s = symbol(ParserSym.DO, yytext()); tokens.add(s); return s; }
+    "read"   { Symbol s = symbol(ParserSym.READ, yytext()); tokens.add(s); return s; }
+    "print"  { Symbol s = symbol(ParserSym.PRINT, yytext()); tokens.add(s); return s; }
+    "main"   { Symbol s = symbol(ParserSym.MAIN, yytext()); tokens.add(s); return s; }
+    "true"   { Symbol s = symbol(ParserSym.TRUE, yytext()); tokens.add(s); return s; }
+    "break"  { Symbol s = symbol(ParserSym.BREAK, yytext()); tokens.add(s); return s; }
+    "false"  { Symbol s = symbol(ParserSym.FALSE, yytext()); tokens.add(s); return s; }
+    "$"      { Symbol s = symbol(ParserSym.DOLAR, yytext()); tokens.add(s); return s; }
+    "not"    { Symbol s = symbol(ParserSym.NOT, yytext()); tokens.add(s); return s; }
+    "!"      { Symbol s = symbol(ParserSym.NOT, yytext()); tokens.add(s); return s; }
 
     /* identifiers */
-    {Identifier}        { return symbol(ParserSym.IDENTIFIER, yytext()); }
+    {Identifier}        { Symbol s = symbol(ParserSym.IDENTIFIER, yytext()); tokens.add(s); return s; }
 
     /* literals */
-    {IntegerLiteral}    { return symbol(ParserSym.INTEGER_LITERAL, Integer.parseInt(yytext())); }
-    {FloatLiteral}      { return symbol(ParserSym.FLOAT_LITERAL, Float.parseFloat(yytext())); }
-    \'[^\\\']\'         { return symbol(ParserSym.CHAR_LITERAL, yytext().charAt(1)); } // 'a', 'b', etc.
+    {IntegerLiteral}    { Symbol s = symbol(ParserSym.INTEGER_LITERAL, Integer.parseInt(yytext())); tokens.add(s); return s; }
+    {FloatLiteral}      { Symbol s = symbol(ParserSym.FLOAT_LITERAL, Float.parseFloat(yytext())); tokens.add(s); return s; }
+    \'[^\\\']\'         { Symbol s = symbol(ParserSym.CHAR_LITERAL, yytext().charAt(1)); tokens.add(s); return s; } // 'a', 'b', etc.
     \" { yybegin(STRING); string.setLength(0); } // Comienzo del string
+
     /* operators and separators */
-    "="     { return symbol(ParserSym.EQ, yytext()); }
-    "=="    { return symbol(ParserSym.EQEQ, yytext()); }
-    "+"     { return symbol(ParserSym.PLUS, yytext()); }
-    "-"     { return symbol(ParserSym.MINUS, yytext()); }
-    "*"     { return symbol(ParserSym.MUL, yytext()); }
-    "/"     { return symbol(ParserSym.DIV, yytext()); }
-    "("     { return symbol(ParserSym.LPAREN, yytext()); }
-    ")"     { return symbol(ParserSym.RPAREN, yytext()); }
-    "{"     { return symbol(ParserSym.LBRACE, yytext()); }
-    "}"     { return symbol(ParserSym.RBRACE, yytext()); }
-    "++"    { return symbol(ParserSym.INCREMENT, yytext()); }
-    "--"    { return symbol(ParserSym.DECREMENT, yytext()); }
-    "["     { return symbol(ParserSym.LBRACKET, yytext()); }
-    "]"     { return symbol(ParserSym.RBRACKET, yytext()); }
-    "**"    { return symbol(ParserSym.POWER, yytext()); }
-    "~"     { return symbol(ParserSym.MODULO, yytext()); }
-    "<"     { return symbol(ParserSym.LESS_THAN, yytext()); }
-    "<="    { return symbol(ParserSym.LESS_THAN_EQUAL, yytext()); }
-    ">"     { return symbol(ParserSym.GREATER_THAN, yytext()); }
-    ">="    { return symbol(ParserSym.GREATER_THAN_EQUAL, yytext()); }
-    "!="    { return symbol(ParserSym.NOT_EQUAL, yytext()); }
-    "^"     { return symbol(ParserSym.AND, yytext()); }
-    "#"     { return symbol(ParserSym.OR, yytext()); }
-    ","     { return symbol(ParserSym.COMMA, yytext()); }
+    "="     { Symbol s = symbol(ParserSym.EQ, yytext()); tokens.add(s); return s; }
+    "=="    { Symbol s = symbol(ParserSym.EQEQ, yytext()); tokens.add(s); return s; }
+    "+"     { Symbol s = symbol(ParserSym.PLUS, yytext()); tokens.add(s); return s; }
+    "-"     { Symbol s = symbol(ParserSym.MINUS, yytext()); tokens.add(s); return s; }
+    "*"     { Symbol s = symbol(ParserSym.MUL, yytext()); tokens.add(s); return s; }
+    "/"     { Symbol s = symbol(ParserSym.DIV, yytext()); tokens.add(s); return s; }
+    "("     { Symbol s = symbol(ParserSym.LPAREN, yytext()); tokens.add(s); return s; }
+    ")"     { Symbol s = symbol(ParserSym.RPAREN, yytext()); tokens.add(s); return s; }
+    "{"     { Symbol s = symbol(ParserSym.LBRACE, yytext()); tokens.add(s); return s; }
+    "}"     { Symbol s = symbol(ParserSym.RBRACE, yytext()); tokens.add(s); return s; }
+    "++"    { Symbol s = symbol(ParserSym.INCREMENT, yytext()); tokens.add(s); return s; }
+    "--"    { Symbol s = symbol(ParserSym.DECREMENT, yytext()); tokens.add(s); return s; }
+    "["     { Symbol s = symbol(ParserSym.LBRACKET, yytext()); tokens.add(s); return s; }
+    "]"     { Symbol s = symbol(ParserSym.RBRACKET, yytext()); tokens.add(s); return s; }
+    "**"    { Symbol s = symbol(ParserSym.POWER, yytext()); tokens.add(s); return s; }
+    "~"     { Symbol s = symbol(ParserSym.MODULO, yytext()); tokens.add(s); return s; }
+    "<"     { Symbol s = symbol(ParserSym.LESS_THAN, yytext()); tokens.add(s); return s; }
+    "<="    { Symbol s = symbol(ParserSym.LESS_THAN_EQUAL, yytext()); tokens.add(s); return s; }
+    ">"     { Symbol s = symbol(ParserSym.GREATER_THAN, yytext()); tokens.add(s); return s; }
+    ">="    { Symbol s = symbol(ParserSym.GREATER_THAN_EQUAL, yytext()); tokens.add(s); return s; }
+    "!="    { Symbol s = symbol(ParserSym.NOT_EQUAL, yytext()); tokens.add(s); return s; }
+    "^"     { Symbol s = symbol(ParserSym.AND, yytext()); tokens.add(s); return s; }
+    "#"     { Symbol s = symbol(ParserSym.OR, yytext()); tokens.add(s); return s; }
+    ","     { Symbol s = symbol(ParserSym.COMMA, yytext()); tokens.add(s); return s; }
+
 
 
     /* comments (C-style) */

@@ -4,6 +4,8 @@ import java.util.List;
 import java_cup.runtime.*;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.io.StringWriter;
+import java.io.PrintWriter;
 
 class Parser;
 
@@ -15,6 +17,9 @@ action code {:
        int currentLabel = 1;
        public void imprimirCod3D() {
               System.out.println(cod3D.toString());
+       }
+       public String getImprimirCod3DOutput(){
+              return cod3D.toString();
        }
 
 
@@ -38,6 +43,10 @@ parser code {:
               m.append(": "+message);
               }
               System.err.println(m);
+       }
+       public String getSymbolTable(){
+              return symbolTable.getPrintAllScopes();
+              
        }
 
 

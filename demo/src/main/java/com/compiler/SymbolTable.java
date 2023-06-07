@@ -47,12 +47,37 @@ public class SymbolTable {
             scopeIndex++;
         }
     }
+
+
+    private String getPrintedScopes(ArrayList<HashMap<String, SymbolInfo>> scopesToPrint) {
+        StringBuilder sb = new StringBuilder();
+        int scopeIndex = 0;
+        for (HashMap<String, SymbolInfo> scope : scopesToPrint) {
+            sb.append("Alcance ").append(scopeIndex).append(":\n");
+            for (String key : scope.keySet()) {
+                SymbolInfo info = scope.get(key);
+                sb.append("    Identificador: ").append(key).append("\n");
+                sb.append("    Tipo: ").append(info.getType()).append("\n");
+                sb.append("    Valor: ").append(info.getValue()).append("\n\n");
+            }
+            scopeIndex++;
+        }
+        return sb.toString();
+    }
     
     public void printAllScopes() {
         ArrayList<HashMap<String, SymbolInfo>> allScopes = new ArrayList<>(scopes);
         allScopes.addAll(oldScopes);
         printScopes(allScopes);
     }
+
+
+    public String getPrintAllScopes() {
+        ArrayList<HashMap<String, SymbolInfo>> allScopes = new ArrayList<>(scopes);
+        allScopes.addAll(oldScopes);
+        return getPrintedScopes(allScopes);
+    }
+
     public SymbolInfo getGlobalSymbol(String identifier) {
         HashMap<String, SymbolInfo> globalScope = scopes.get(0);  // get the global scope
         if (globalScope.containsKey(identifier)) {
@@ -60,5 +85,6 @@ public class SymbolTable {
         }
         return null;  // not found in global scope
     }
+    
     
 }

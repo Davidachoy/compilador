@@ -1,7 +1,7 @@
-
 int main(){
 
     int a$
+    int b$
 }
 
 int prueba (float  d){
