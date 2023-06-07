@@ -1,0 +1,17 @@
+Alcance 0:
+    Identificador: prueba2
+    Tipo: function
+    Valor: null
+
+Alcance 1:
+Alcance 2:
+    Identificador: l
+    Tipo: int
+    Valor: 45::t4
+
+Alcance 3:
+    Identificador: a
+    Tipo: int
+    Valor: 3::t8
+
+Alcance 4:

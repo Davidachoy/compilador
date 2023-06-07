@@ -12,7 +12,7 @@ import java.io.IOException;
 public class App {
     public static void main(String[] args) {
 
-        String archivo = "C:/Users/javie/Desktop/compilador/demo/prueba.txt";
+        String archivo = "prueba.txt";
         try {
             BufferedReader reader = new BufferedReader(new FileReader(archivo));
             StringBuilder outputBuilder = new StringBuilder();

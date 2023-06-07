@@ -4,6 +4,9 @@
 
 package com.compiler;
 import java_cup.runtime.*;
+import java.util.List;
+import java.util.ArrayList;
+
 
 
 @SuppressWarnings("fallthrough")
@@ -390,6 +393,13 @@ class Lexer implements java_cup.runtime.Scanner, ParserSym {
     }
     private Symbol symbol(int type, Object value) {
     return new Symbol(type, yyline, yycolumn, value);
+    }
+
+    List<Symbol> tokens = new ArrayList<>();
+
+    public List<Symbol> getTokens() {
+    return tokens;
+    
     }
 
 
@@ -830,7 +840,7 @@ class Lexer implements java_cup.runtime.Scanner, ParserSym {
           // fall through
           case 63: break;
           case 3:
-            { return symbol(ParserSym.NOT, yytext());
+            { Symbol s = symbol(ParserSym.NOT, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 64: break;
@@ -840,67 +850,67 @@ class Lexer implements java_cup.runtime.Scanner, ParserSym {
           // fall through
           case 65: break;
           case 5:
-            { return symbol(ParserSym.OR, yytext());
+            { Symbol s = symbol(ParserSym.OR, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 66: break;
           case 6:
-            { return symbol(ParserSym.DOLAR, yytext());
+            { Symbol s = symbol(ParserSym.DOLAR, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 67: break;
           case 7:
-            { return symbol(ParserSym.LPAREN, yytext());
+            { Symbol s = symbol(ParserSym.LPAREN, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 68: break;
           case 8:
-            { return symbol(ParserSym.RPAREN, yytext());
+            { Symbol s = symbol(ParserSym.RPAREN, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 69: break;
           case 9:
-            { return symbol(ParserSym.MUL, yytext());
+            { Symbol s = symbol(ParserSym.MUL, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 70: break;
           case 10:
-            { return symbol(ParserSym.PLUS, yytext());
+            { Symbol s = symbol(ParserSym.PLUS, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 71: break;
           case 11:
-            { return symbol(ParserSym.COMMA, yytext());
+            { Symbol s = symbol(ParserSym.COMMA, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 72: break;
           case 12:
-            { return symbol(ParserSym.MINUS, yytext());
+            { Symbol s = symbol(ParserSym.MINUS, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 73: break;
           case 13:
-            { return symbol(ParserSym.DIV, yytext());
+            { Symbol s = symbol(ParserSym.DIV, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 74: break;
           case 14:
-            { return symbol(ParserSym.INTEGER_LITERAL, Integer.parseInt(yytext()));
+            { Symbol s = symbol(ParserSym.INTEGER_LITERAL, Integer.parseInt(yytext())); tokens.add(s); return s;
             }
           // fall through
           case 75: break;
           case 15:
-            { return symbol(ParserSym.LESS_THAN, yytext());
+            { Symbol s = symbol(ParserSym.LESS_THAN, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 76: break;
           case 16:
-            { return symbol(ParserSym.EQ, yytext());
+            { Symbol s = symbol(ParserSym.EQ, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 77: break;
           case 17:
-            { return symbol(ParserSym.GREATER_THAN, yytext());
+            { Symbol s = symbol(ParserSym.GREATER_THAN, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 78: break;
@@ -910,37 +920,37 @@ class Lexer implements java_cup.runtime.Scanner, ParserSym {
           // fall through
           case 79: break;
           case 19:
-            { return symbol(ParserSym.IDENTIFIER, yytext());
+            { Symbol s = symbol(ParserSym.IDENTIFIER, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 80: break;
           case 20:
-            { return symbol(ParserSym.LBRACKET, yytext());
+            { Symbol s = symbol(ParserSym.LBRACKET, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 81: break;
           case 21:
-            { return symbol(ParserSym.RBRACKET, yytext());
+            { Symbol s = symbol(ParserSym.RBRACKET, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 82: break;
           case 22:
-            { return symbol(ParserSym.AND, yytext());
+            { Symbol s = symbol(ParserSym.AND, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 83: break;
           case 23:
-            { return symbol(ParserSym.LBRACE, yytext());
+            { Symbol s = symbol(ParserSym.LBRACE, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 84: break;
           case 24:
-            { return symbol(ParserSym.RBRACE, yytext());
+            { Symbol s = symbol(ParserSym.RBRACE, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 85: break;
           case 25:
-            { return symbol(ParserSym.MODULO, yytext());
+            { Symbol s = symbol(ParserSym.MODULO, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 86: break;
@@ -960,22 +970,22 @@ class Lexer implements java_cup.runtime.Scanner, ParserSym {
           // fall through
           case 89: break;
           case 29:
-            { return symbol(ParserSym.NOT_EQUAL, yytext());
+            { Symbol s = symbol(ParserSym.NOT_EQUAL, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 90: break;
           case 30:
-            { return symbol(ParserSym.POWER, yytext());
+            { Symbol s = symbol(ParserSym.POWER, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 91: break;
           case 31:
-            { return symbol(ParserSym.INCREMENT, yytext());
+            { Symbol s = symbol(ParserSym.INCREMENT, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 92: break;
           case 32:
-            { return symbol(ParserSym.DECREMENT, yytext());
+            { Symbol s = symbol(ParserSym.DECREMENT, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 93: break;
@@ -985,17 +995,17 @@ class Lexer implements java_cup.runtime.Scanner, ParserSym {
           // fall through
           case 94: break;
           case 34:
-            { return symbol(ParserSym.LESS_THAN_EQUAL, yytext());
+            { Symbol s = symbol(ParserSym.LESS_THAN_EQUAL, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 95: break;
           case 35:
-            { return symbol(ParserSym.EQEQ, yytext());
+            { Symbol s = symbol(ParserSym.EQEQ, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 96: break;
           case 36:
-            { return symbol(ParserSym.GREATER_THAN_EQUAL, yytext());
+            { Symbol s = symbol(ParserSym.GREATER_THAN_EQUAL, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 97: break;
@@ -1005,12 +1015,12 @@ class Lexer implements java_cup.runtime.Scanner, ParserSym {
           // fall through
           case 98: break;
           case 38:
-            { return symbol(ParserSym.DO, yytext());
+            { Symbol s = symbol(ParserSym.DO, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 99: break;
           case 39:
-            { return symbol(ParserSym.IF, yytext());
+            { Symbol s = symbol(ParserSym.IF, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 100: break;
@@ -1035,92 +1045,92 @@ class Lexer implements java_cup.runtime.Scanner, ParserSym {
           // fall through
           case 104: break;
           case 44:
-            { return symbol(ParserSym.CHAR_LITERAL, yytext().charAt(1));
+            { Symbol s = symbol(ParserSym.CHAR_LITERAL, yytext().charAt(1)); tokens.add(s); return s;
             }
           // fall through
           case 105: break;
           case 45:
-            { return symbol(ParserSym.FLOAT_LITERAL, Float.parseFloat(yytext()));
+            { Symbol s = symbol(ParserSym.FLOAT_LITERAL, Float.parseFloat(yytext())); tokens.add(s); return s;
             }
           // fall through
           case 106: break;
           case 46:
-            { return symbol(ParserSym.FOR, yytext());
+            { Symbol s = symbol(ParserSym.FOR, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 107: break;
           case 47:
-            { return symbol(ParserSym.INT, yytext());
+            { Symbol s = symbol(ParserSym.INT, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 108: break;
           case 48:
-            { return symbol(ParserSym.BOOL, yytext());
+            { Symbol s = symbol(ParserSym.BOOL, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 109: break;
           case 49:
-            { return symbol(ParserSym.CHAR, yytext());
+            { Symbol s = symbol(ParserSym.CHAR, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 110: break;
           case 50:
-            { return symbol(ParserSym.ELIF, yytext());
+            { Symbol s = symbol(ParserSym.ELIF, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 111: break;
           case 51:
-            { return symbol(ParserSym.ELSE, yytext());
+            { Symbol s = symbol(ParserSym.ELSE, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 112: break;
           case 52:
-            { return symbol(ParserSym.MAIN, yytext());
+            { Symbol s = symbol(ParserSym.MAIN, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 113: break;
           case 53:
-            { return symbol(ParserSym.READ, yytext());
+            { Symbol s = symbol(ParserSym.READ, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 114: break;
           case 54:
-            { return symbol(ParserSym.TRUE, yytext());
+            { Symbol s = symbol(ParserSym.TRUE, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 115: break;
           case 55:
-            { return symbol(ParserSym.BREAK, yytext());
+            { Symbol s = symbol(ParserSym.BREAK, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 116: break;
           case 56:
-            { return symbol(ParserSym.FALSE, yytext());
+            { Symbol s = symbol(ParserSym.FALSE, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 117: break;
           case 57:
-            { return symbol(ParserSym.FLOAT, yytext());
+            { Symbol s = symbol(ParserSym.FLOAT, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 118: break;
           case 58:
-            { return symbol(ParserSym.PRINT, yytext());
+            { Symbol s = symbol(ParserSym.PRINT, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 119: break;
           case 59:
-            { return symbol(ParserSym.WHILE, yytext());
+            { Symbol s = symbol(ParserSym.WHILE, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 120: break;
           case 60:
-            { return symbol(ParserSym.RETURN, yytext());
+            { Symbol s = symbol(ParserSym.RETURN, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 121: break;
           case 61:
-            { return symbol(ParserSym.STRING, yytext());
+            { Symbol s = symbol(ParserSym.STRING, yytext()); tokens.add(s); return s;
             }
           // fall through
           case 122: break;

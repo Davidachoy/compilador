@@ -17,7 +17,9 @@ action code {:
        int currentFor = 1;
        int currentWhile = 1;
 
-
+       public String getImprimirCod3DOutput(){
+              return cod3D.toString();
+       }
 
 
        public void imprimirCod3D() {
@@ -50,7 +52,12 @@ parser code {:
 
        public void printSymbolTable() {
         symbolTable.printAllScopes();
-    }
+       }
+
+       public String getSymbolTable(){
+              return symbolTable.getPrintAllScopes();
+
+       }
 
     public void report_semantic_error(String message, Object info) {
     StringBuilder m = new StringBuilder("Error semántico");

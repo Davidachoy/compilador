@@ -1,3 +1,4 @@
 com\compiler\Parser.class
 com\compiler\ParserSym.class
+com\compiler\Lexer.class
 com\compiler\Parser$CUP$Parser$actions.class
