@@ -545,7 +545,7 @@ factor ::=     INTEGER_LITERAL:intL
                      String tempTemp = temp;
                      temp = "t" + (currentTemp++);
                      if (opu.toString().equals("++")){
-                            cod3D.append("\n" + temp + " = " + tempTemp+" + 1"+);
+                            cod3D.append("\n" + temp + " = " + tempTemp+" + 1");
                      }
 
               :}
