@@ -1,19 +1,11 @@
 
 int main(){
-
 }
 int prueba2 (float  d){
 
-    if (2<6){
-
-        for (int i$ i>5 $ ++i ){
-            int a$
-        }
-
-    }elif (2>1){
-        int a = 3$
-    }else {
+    do{
         int a$
-    }
+
+     } while(3>5)
 
     }
