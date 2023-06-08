@@ -39,11 +39,23 @@ parser code {:
        private List<ParameterInfo> callParameters = new ArrayList<>();
 
 
-       public void validateParamSizeType(SymbolInfo info){
-              System.out.println(info.getType());
+       public void validateParamSizeType(SymbolInfo info,Object id){
               List<ParameterInfo> parameters = info.getParameters();
+              if (!(parameters.size() == callParameters.size())) {
+                     report_semantic_error("La función "+id.toString()+" requiere "+ (parameters.size()) +" variables, pero se proporcionaron "+callParameters.size(),id);
+              }
+              for (int i = 0; i < parameters.size(); i++){
+                     ParameterInfo parameter = parameters.get(i);
+                     ParameterInfo callParam = callParameters.get(i);
+                      if (!parameter.getType().equals(callParam.getType())){
+                            report_semantic_error("Tipo de parámetro incorrecto en la llamada a la función " + id.toString(), id);
+                      }
+              }
+              callParameters.clear();
+
 
        }
+
 
        public void report_error(String message, Object info) {
               StringBuilder m = new StringBuilder("Error de sintaxis");
@@ -194,6 +206,20 @@ Function ::= Function_id:id LPAREN Parameters
               {: 
 
                      symbolTable.pushScope();
+                            int i = 0;
+                     for (ParameterInfo param : currentParameters) {
+                            if (symbolTable.getSymbol(param.getName()) == null) {
+                                   cod3D.append("\ndata_"+ param.getType() + " " + param.getName());
+                                   cod3D.append("\n"+param.getName()+"= param["+i+++"]");
+                                   SymbolInfo info = new SymbolInfo();
+                                   info.setType(param.getType());
+                                   info.setIdentifier(param.getName());
+                                   symbolTable.addSymbol(param.getName(), info);
+                            } else {
+                                   report_semantic_error("Variable ya definida: " + param.getName(), param);
+    }
+}
+
               :} 
               StatementList RBRACE
               {: 
@@ -220,6 +246,7 @@ Parameters ::=  Param
 Param ::= Type:t IDENTIFIER:id
               {:
                             currentParameters.add(new ParameterInfo(id.toString(),((Type)t).getTypeName()));
+
    
               :};
 //statements 
@@ -238,7 +265,6 @@ Statement   ::= error_until_dolar
                      if(!info.getFunctionType().equals(partesExpr[2])){
                             report_semantic_error("Tipo de retorno incorrecto para la funcion: " + info.getIdentifier(), e);      
                      }
-
               :}
               | ReadFunction DOLAR
               | PrintFunction DOLAR
@@ -252,20 +278,25 @@ Statement   ::= error_until_dolar
                             report_semantic_error("Funcion no definida: " + id, id);
                      }else{
                             RESULT = id;
-                            validateParamSizeType(info);
-
+                            validateParamSizeType(info,id);
                      }
-                    
 
-                     :}
+              :}
               | Assign DOLAR;
 
+FunctionCall ::=        IDENTIFIER:id LPAREN RPAREN
+                     {:
+                            RESULT = id;
+                            cod3D.append("\ncall " + id + ", 0");
+
+                     :}
 
 
-FunctionCall ::=        IDENTIFIER:id LPAREN RPAREN {: RESULT = id;:}
                      |  IDENTIFIER:id LPAREN InvocationParams RPAREN 
                      {: 
                             RESULT = id;
+                            cod3D.append("\ncall " + id + ", " + callParameters.size());
+
                      :};
 
 InvocationParams ::=    InvocationParams COMMA InvParam
@@ -275,7 +306,10 @@ InvocationParams ::=    InvocationParams COMMA InvParam
 InvParam ::=     Literals:l 
               {:
                      String[] partesExpr = l.toString().split("::");
-                     currentParameters.add(new ParameterInfo(partesExpr[0],partesExpr[1]));
+                     callParameters.add(new ParameterInfo(partesExpr[0],partesExpr[1]));
+                     String temp = "t" + (currentTemp++);
+                     cod3D.append("\n" + temp + " = " + partesExpr[1]);
+                     cod3D.append("\nparam " + temp);
               :}
               |  IDENTIFIER:id 
               {:
@@ -283,37 +317,82 @@ InvParam ::=     Literals:l
                      if (info == null){
                             report_semantic_error("Identificador no definido: " + id, id);
                      }else{
-                            currentParameters.add(new ParameterInfo(id.toString(),info.getType()));
+                            callParameters.add(new ParameterInfo(id.toString(),info.getType()));
+                            String temp = "t" + (currentTemp++);
+                            cod3D.append("\n" + temp + " = " + id);
+                            cod3D.append("\nparam " + temp);
                      }
               :};
 
 //arrays
-Array_declaration ::= Type IDENTIFIER LBRACKET expr RBRACKET;
+Array_declaration ::= Type:t IDENTIFIER:id LBRACKET expr:e RBRACKET
+              {:
+                     String[] partesExpr = e.toString().split("::");
+                     if (!partesExpr[2].equals("int")) {
+                            report_semantic_error("Declaración incorrecta de array: " + id.toString(), id);
+                     }
+                     if (symbolTable.getSymbol(id.toString()) == null) {
+                            cod3D.append("\ndata_"+((Type)t).getTypeName()+" "+id.toString());
+                            SymbolInfo info = new SymbolInfo();
+                            info.setType(((Type)t).getTypeName());
+                            info.setIdentifier(id.toString());
+                            symbolTable.addSymbol(id.toString(), info);
+                            RESULT = new Declaration((Type)t, id.toString());
+                     } else {
+                            report_semantic_error("Variable ya definida: " + id.toString(), id);
+                     }
+              :};
 
-Array_assign ::= IDENTIFIER LBRACKET expr RBRACKET EQ expr;
+Array_assign ::= IDENTIFIER:id LBRACKET expr:e1 RBRACKET EQ expr:e2
+              {:
+                     String[] partesExpr1 = e1.toString().split("::");
+                     String[] partesExpr2 = e2.toString().split("::");
+                     if (!partesExpr1[2].equals("int")) {
+                            report_semantic_error("Asignacion incorrecta de array: " + id.toString(), id);
+                     }
+                     SymbolInfo info = symbolTable.getSymbol(id.toString());
+                     if (info == null) {
+                            report_semantic_error("Identificador no definido: " + id.toString(), id);
+                     }
+                     if (!info.getType().equals(partesExpr2[2])){
+                            report_semantic_error("Asignacion incorrecta de array: " + id.toString(), id);
+                     }
 
-Array_expr ::= IDENTIFIER LBRACKET expr RBRACKET ;
+              :};
+
+Array_expr ::= IDENTIFIER:id LBRACKET expr:e RBRACKET 
+              {:
+                     String temp = "t" + (currentTemp++);
+                     String[] partesExpr = e.toString().split("::");
+                     if (!partesExpr[2].equals("int")) {
+                            report_semantic_error("Asignacion incorrecta de array: " + id.toString(), id);
+                     }
+                     SymbolInfo info = symbolTable.getSymbol(id.toString());
+                     if (info == null) {
+                            report_semantic_error("Array no definido: " + id.toString(), id);
+                     }
+
+                     RESULT= id+"::"+temp+"::"+info.getType();
+              :}
+;
 // assing 
 
 Assign ::=       IDENTIFIER:id EQ expr:e
-                     {:
-
-
-                 SymbolInfo info = symbolTable.getSymbol(id.toString());
-                if (info == null) {
-                   report_semantic_error("Identificador no definido: " + id.toString(), id);
-                }
-            else {
-                     String[] partesExpr = e.toString().split("::");
-                     if(!info.getType().equals(partesExpr[2])){
-
-                     report_semantic_error("Tipo de asignación incorrecto para: " + id.toString(), id);      
+              {:
+                     SymbolInfo info = symbolTable.getSymbol(id.toString());
+                     if (info == null) {
+                            report_semantic_error("Identificador no definido: " + id.toString(), id);
                      }
-                     cod3D.append("\n"+id+" = "+partesExpr[1]); 
-                     info.setValue(e);
-                     
-            }
-                     :}
+                     else {
+                            String[] partesExpr = e.toString().split("::");
+                            if(!info.getType().equals(partesExpr[2])){
+                            report_semantic_error("Tipo de asignación incorrecto para: " + id.toString(), id);      
+                            }
+                            cod3D.append("\n"+id+" = "+partesExpr[1]); 
+                            info.setValue(e);
+                            
+                     }
+              :}
               |  IDENTIFIER EQ ReadFunction
               |  IDENTIFIER EQ PrintFunction;
 
@@ -673,14 +752,16 @@ factor ::=     INTEGER_LITERAL:intL
               :}
 
               |  LPAREN expr:e RPAREN     {:RESULT = e;:}
-              |  Array_expr
+              |  Array_expr:aex  {:RESULT = aex;:}
               |  FunctionCall:id
               {:
                      SymbolInfo info = symbolTable.getSymbol(id.toString());
                      if (info == null){
                             report_semantic_error("Funcion no definida: " + id, id);
                      }else{
-                            RESULT = id;
+                            validateParamSizeType(info,id);
+                            String temp = "t" + (currentTemp++);
+                            RESULT = id+"::"+temp+"::"+info.getFunctionType();
                      }
                     
 
