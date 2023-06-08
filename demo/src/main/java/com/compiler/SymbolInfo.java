@@ -32,6 +32,7 @@ public class SymbolInfo {
         this.valueType = valueType;
     }
     
+    
 
     
 }

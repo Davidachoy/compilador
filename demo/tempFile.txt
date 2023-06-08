@@ -20,14 +20,14 @@ _main_for_1_condicion:
     t3 = i
     t4 = b
     t5 = t3 <= t4
-    if t5 goto _main_for_1_bloque
+    if t5 goto for_1_bloque
     goto _main_for_1_end
 _main_for_1_alter:
 t9 = i
 t10 = t9 + 1
 i = t10
 goto _main_for_1_condicion
-_main_for_1_bloque:
+_for_1_bloque:
 t6 = a
 param t6
 t7 = b
