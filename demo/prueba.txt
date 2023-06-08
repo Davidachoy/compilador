@@ -1,7 +1,5 @@
 
 int main(){
-}
-int prueba2 (float  d){
 
     do{
         int a$
