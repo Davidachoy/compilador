@@ -1,8 +1,9 @@
 
 int main(){
 
-float b$
-b = 5$
+    do{
+        int a$
 
-}
+     } while(3>5)
 
+    }

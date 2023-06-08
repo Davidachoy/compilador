@@ -14,11 +14,6 @@ action code {:
        int currentTemp = 1;
        int currentLabel = 1;
 
-
-
-
-
-
        int currentIf = 1;
        int currentFor = 1;
        int currentWhile = 1;
@@ -416,7 +411,18 @@ Cond_for ::=     Declaration
 
 //do-while
 
-Do_While_Structure::= DO LBRACE {: symbolTable.pushScope(); :}  StatementList RBRACE {: symbolTable.popScope(); :} WHILE LPAREN expr RPAREN DOLAR;
+Do_While_Structure::= DO LBRACE
+                     {:
+                            symbolTable.pushScope();
+                            cod3D.append("\ndo_while_"+currentWhile+"_begin:");
+                     :}  StatementList RBRACE WHILE LPAREN expr:e RPAREN
+                     {:
+                            String[] partesExpr1 = e.toString().split("::");               
+                            cod3D.append("\nif _"+partesExpr1[1]+" goto do_while_"+currentWhile+"_end");
+                            cod3D.append("\ngoto do_while_"+currentWhile+"_begin:");
+                            cod3D.append("\ndo_while_"+currentWhile+++"_end:");
+                            symbolTable.popScope();
+                     :};
 
 // READ - PRINT
 

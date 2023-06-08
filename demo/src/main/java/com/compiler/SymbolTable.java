@@ -36,7 +36,10 @@ public class SymbolTable {
     private void printScopes(ArrayList<HashMap<String, SymbolInfo>> scopesToPrint) {
         int scopeIndex = 0;
         for (HashMap<String, SymbolInfo> scope : scopesToPrint) {
-            System.out.println("Alcance " + scopeIndex + ":");
+            if (scopeIndex == 0 ) {
+                System.out.println("Alcance Global");
+                
+            }
             for (String key : scope.keySet()) {
                 SymbolInfo info = scope.get(key);
                 System.out.println("    Identificador: " + key);
@@ -53,12 +56,17 @@ public class SymbolTable {
         StringBuilder sb = new StringBuilder();
         int scopeIndex = 0;
         for (HashMap<String, SymbolInfo> scope : scopesToPrint) {
-            sb.append("Alcance ").append(scopeIndex).append(":\n");
+            if (scopeIndex == 0 ) {
+                sb.append("Alcance Global\n");  
+            }
             for (String key : scope.keySet()) {
                 SymbolInfo info = scope.get(key);
                 sb.append("    Identificador: ").append(key).append("\n");
                 sb.append("    Tipo: ").append(info.getType()).append("\n");
                 sb.append("    Valor: ").append(info.getValue()).append("\n\n");
+            }
+            if (scopeIndex == 0 ) {
+                sb.append("Alcance local\n");  
             }
             scopeIndex++;
         }
