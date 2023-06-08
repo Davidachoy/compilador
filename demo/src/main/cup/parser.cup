@@ -227,6 +227,7 @@ Statement   ::= error_until_dolar
               {:
                      SymbolInfo info =symbolTable.getCurrentFunction();
                      System.out.println(info.getFunctionType());
+
               :}
               | ReadFunction DOLAR
               | PrintFunction DOLAR
@@ -273,9 +274,7 @@ Assign ::=       IDENTIFIER:id EQ expr:e
                  SymbolInfo info = symbolTable.getSymbol(id.toString());
                 if (info == null) {
                    report_semantic_error("Identificador no definido: " + id.toString(), id);
-                } if (info.getType().equals("string") && !(e instanceof String)) { //quitar
-                report_semantic_error("Tipo de asignación incorrecto para: " + id.toString(), id); //quitar
-            }
+                }
             else {
                      String[] partesExpr = e.toString().split("::");
                      if(!info.getType().equals(partesExpr[2])){
