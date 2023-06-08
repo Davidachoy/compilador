@@ -183,7 +183,7 @@ Function ::= Function_id:id LPAREN Parameters RPAREN LBRACE {: symbolTable.pushS
                      } 
               :};
                     
-                     
+      
 //_main_begin:
 
 Function_id ::= Type:t IDENTIFIER:id 
