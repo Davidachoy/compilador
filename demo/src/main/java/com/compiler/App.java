@@ -57,6 +57,9 @@ public class App {
             writeToFile(cod3DOutput, "Codigo3D.txt");
             writeToFile(sintactiOutput, "Analisis.txt");
 
+            int prueba12 = 5 + 2;
+
+
             reader.close();
         } catch(Exception e) {
             System.out.println("Ocurrió un error durante el análisis: " + e.getMessage());

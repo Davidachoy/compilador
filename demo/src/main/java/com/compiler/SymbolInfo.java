@@ -1,11 +1,34 @@
 package com.compiler;
+import java.util.List;
+import java.util.ArrayList;
 
 public class SymbolInfo {
     private String identifier;
     private String type;
+    private String functionType;
     private Object value;
     private String valueType;
+    
+    private List<ParameterInfo> parameters; // nuevo campo
+
+    public String getFunctionType() {
+        return functionType;
+    }
+    public void setFunctionType(String functionType) {
+        this.functionType = functionType;
+    }
+    
+
+    public List<ParameterInfo> getParameters() {
+        return parameters;
+    }
+    public void setParameters(List<ParameterInfo> parameters) {
+        this.parameters = parameters;
+
+    }
     public SymbolInfo() {
+        this.parameters = new ArrayList<>();
+
     }
     public String getIdentifier() {
         return identifier;
@@ -31,8 +54,7 @@ public class SymbolInfo {
     public void setValueType(String valueType) {
         this.valueType = valueType;
     }
-    
-    
+
 
     
 }

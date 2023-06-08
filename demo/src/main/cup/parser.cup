@@ -1,5 +1,6 @@
 package com.compiler;
 import java.util.List;
+import java.util.ArrayList;
 
 import java_cup.runtime.*;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ parser code {:
     // define the symbol table
        private SymbolTable symbolTable = new SymbolTable();
        private String endIfLabel;
+       private List<ParameterInfo> currentParameters = new ArrayList<>();
 
        public void report_error(String message, Object info) {
               StringBuilder m = new StringBuilder("Error de sintaxis");
@@ -165,17 +167,32 @@ Main ::=      INT MAIN
                      cod3D.append("\n_main_end: ");
               :};        
 
-Function ::= Function_id:id LPAREN Parameters RPAREN LBRACE {: symbolTable.pushScope(); :} StatementList RBRACE
-              {: 
-                     symbolTable.popScope();
-                     cod3D.append("\n_"+ ((FunctionID)id).getId()+"_end: ");
+Function ::= Function_id:id LPAREN Parameters 
+              {:
                      if (symbolTable.getSymbol(id.toString()) == null) {
                             SymbolInfo info = new SymbolInfo();
                             info.setType("function");
+                            info.setFunctionType(((FunctionID)id).getType());
+                            info.setParameters(new ArrayList<>(currentParameters));
+                            symbolTable.setCurrentFunction(info);
                             symbolTable.addSymbol(((FunctionID)id).getId(),info); 
-                     }else {
+
+                            
+                     } else {
                             report_semantic_error("Funcion ya definida: " + id.toString(), id);
                      } 
+              :}
+              RPAREN LBRACE 
+              {: 
+
+                     symbolTable.pushScope();
+              :} 
+              StatementList RBRACE
+              {: 
+                     symbolTable.popScope();
+                     cod3D.append("\n_"+ ((FunctionID)id).getId()+"_end: ");
+  
+                     currentParameters.clear(); 
               :};
                     
       
@@ -192,7 +209,11 @@ Function_id ::= Type:t IDENTIFIER:id
 Parameters ::=  Param
                 |Parameters COMMA Param
                 |  ;                            
-Param ::= Type:t IDENTIFIER:id;
+Param ::= Type:t IDENTIFIER:id
+              {:
+                            currentParameters.add(new ParameterInfo(id.toString(),((Type)t).getTypeName()));
+   
+              :};
 //statements 
 
 StatementList ::=      StatementList:s Statement:e    {: s.add(e); RESULT = s; :}
@@ -202,7 +223,12 @@ StatementList ::=      StatementList:s Statement:e    {: s.add(e); RESULT = s; :
 Statement   ::= error_until_dolar
               | Declaration DOLAR
               | BREAK DOLAR
-              | RETURN expr DOLAR
+              | RETURN expr:e DOLAR
+              {:
+                     SymbolInfo info =symbolTable.getCurrentFunction();
+                     System.out.println(info.getFunctionType());
+
+              :}
               | ReadFunction DOLAR
               | PrintFunction DOLAR
               | ControlStructure
@@ -250,7 +276,6 @@ Assign ::=       IDENTIFIER:id EQ expr:e
                    report_semantic_error("Identificador no definido: " + id.toString(), id);
                 }
             else {
-              
                      String[] partesExpr = e.toString().split("::");
                      if(!info.getType().equals(partesExpr[2])){
 
@@ -258,7 +283,7 @@ Assign ::=       IDENTIFIER:id EQ expr:e
                      }
                      cod3D.append("\n"+id+" = "+partesExpr[1]); 
                      info.setValue(e);
-  
+                     
             }
                      :}
               |  IDENTIFIER EQ ReadFunction
@@ -279,14 +304,13 @@ Declaration::=   Type:t IDENTIFIER:id
                 }
             :}
               |  Type:t IDENTIFIER:id EQ expr:e
-              {:
+              {: 
 
-                String[] partesExpr = e.toString().split("::");
+              String[] partesExpr = e.toString().split("::");
                 if (!partesExpr[2].equals(((Type)t).getTypeName())) {
 
                      report_semantic_error("Declaración incorrecta: " + id.toString(), id);
               }
-
                 if (symbolTable.getSymbol(id.toString()) == null) {
                     SymbolInfo info = new SymbolInfo();
                     info.setType(((Type)t).getTypeName());
@@ -296,8 +320,6 @@ Declaration::=   Type:t IDENTIFIER:id
                 } else {
                     report_semantic_error("Variable ya definida: " + id.toString(), id);
                 }
-
-
             :}
               |  Type IDENTIFIER EQ ReadFunction
               |  Type IDENTIFIER EQ PrintFunction;
@@ -541,6 +563,15 @@ term ::=  factor:f {:RESULT = f;:}
                      report_semantic_error("Operación invalida", e2);
                      }
               :};
+
+/***
+                     if(partesExpr2[2].equales(partesExpr1[2])){
+                            String temp = "t"+(currentTemp++);
+                            cod3D.append("\n"+temp+" = "+partesExpr1[1]+" "+opm+" "+partesExpr2[1]);
+                            RESULT = partesExpr1[0]+opm+partesExpr2[0]+"::"+temp::partesExpr2[2];
+                     }else{
+                            report_semantic_error("error",e2)
+*/
 
 factor ::=     INTEGER_LITERAL:intL      
               {:
