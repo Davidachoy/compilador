@@ -73,7 +73,7 @@ parser code {:
 
     m.append(": "+message);
     System.err.println(m.toString());
-    //System.exit(1);  // Terminate the program with an error status
+    System.exit(1);  // Terminate the program with an error status
    } 
    
 
@@ -247,13 +247,17 @@ Assign ::=       IDENTIFIER:id EQ expr:e
                  SymbolInfo info = symbolTable.getSymbol(id.toString());
                 if (info == null) {
                    report_semantic_error("Identificador no definido: " + id.toString(), id);
-                } if (info.getType().equals("string") && !(e instanceof String)) {
-                report_semantic_error("Tipo de asignación incorrecto para: " + id.toString(), id);
-            }
+                }
             else {
+              
                      String[] partesExpr = e.toString().split("::");
+                     if(!info.getType().equals(partesExpr[2])){
+
+                     report_semantic_error("Tipo de asignación incorrecto para: " + id.toString(), id);      
+                     }
                      cod3D.append("\n"+id+" = "+partesExpr[1]); 
                      info.setValue(e);
+  
             }
            
                      :}
@@ -276,6 +280,13 @@ Declaration::=   Type:t IDENTIFIER:id
             :}
               |  Type:t IDENTIFIER:id EQ expr:e
               {:
+
+                String[] partesExpr = e.toString().split("::");
+                if (!partesExpr[2].equals(((Type)t).getTypeName())) {
+
+                     report_semantic_error("Declaración incorrecta: " + id.toString(), id);
+              }
+
                 if (symbolTable.getSymbol(id.toString()) == null) {
                     SymbolInfo info = new SymbolInfo();
                     info.setType(((Type)t).getTypeName());
@@ -285,6 +296,8 @@ Declaration::=   Type:t IDENTIFIER:id
                 } else {
                     report_semantic_error("Variable ya definida: " + id.toString(), id);
                 }
+
+
             :}
               |  Type IDENTIFIER EQ ReadFunction
               |  Type IDENTIFIER EQ PrintFunction;
@@ -422,25 +435,37 @@ expr_rel ::=     expr_log:exl {:RESULT = exl;:}
                      {:
                             String[] partesExpr1 = e1.toString().split("::");
                             String[] partesExpr2 = e2.toString().split("::");
-                            String temp = "t"+(currentTemp++);
-                            cod3D.append("\n"+temp+" = "+partesExpr1[1]+" "+opl +" "+partesExpr2[1]);
-                            RESULT = partesExpr1[0]+opl+partesExpr2[0]+"::"+temp;
+                            if (partesExpr2[2].equals(partesExpr1[2])) {
+                            String temp = "t" + (currentTemp++);
+                            cod3D.append("\n" + temp + " = " + partesExpr1[1] + " " + opl + " " + partesExpr2[1]);
+                            RESULT = partesExpr1[0] + opl + partesExpr2[0] + "::" + temp + "::" + partesExpr2[2];
+                            } else {
+                            report_semantic_error("Operación invalida", e2);
+                            }
                      :}
               |  expr_log:e1  op_rel:opr expr_log:e2
                      {:
                             String[] partesExpr1 = e1.toString().split("::");
                             String[] partesExpr2 = e2.toString().split("::");
-                            String temp = "t"+(currentTemp++);
-                            cod3D.append("\n"+temp+" = "+partesExpr1[1]+" "+opr +" "+partesExpr2[1]);
-                            RESULT = partesExpr1[0]+opr+partesExpr2[0]+"::"+temp;
+                            if (partesExpr2[2].equals(partesExpr1[2])) {
+                            String temp = "t" + (currentTemp++);
+                            cod3D.append("\n" + temp + " = " + partesExpr1[1] + " " + opr + " " + partesExpr2[1]);
+                            RESULT = partesExpr1[0] + opr + partesExpr2[0] + "::" + temp + "::" + partesExpr2[2];
+                            } else {
+                            report_semantic_error("Operación invalida", e2);
+                            }
                      :}
               |  expr_rel:e1  op_rel:opr expr_rel:e2
                      {:
                             String[] partesExpr1 = e1.toString().split("::");
                             String[] partesExpr2 = e2.toString().split("::");
-                            String temp = "t"+(currentTemp++);
-                            cod3D.append("\n"+temp+" = "+partesExpr1[1]+" "+opr +" "+partesExpr2[1]);
-                            RESULT = partesExpr1[0]+opr+partesExpr2[0]+"::"+temp;
+                            if (partesExpr2[2].equals(partesExpr1[2])) {
+                            String temp = "t" + (currentTemp++);
+                            cod3D.append("\n" + temp + " = " + partesExpr1[1] + " " + opr + " " + partesExpr2[1]);
+                            RESULT = partesExpr1[0] + opr + partesExpr2[0] + "::" + temp + "::" + partesExpr2[2];
+                            } else {
+                            report_semantic_error("Operación invalida", e2);
+                            }
                      :};
 
 expr_log ::=     expr_bin:exb {:RESULT = exb;:}
@@ -448,16 +473,20 @@ expr_log ::=     expr_bin:exb {:RESULT = exb;:}
                      {:
                             String[] partesExpr1 = e1.toString().split("::");
                             String[] partesExpr2 = e2.toString().split("::");
-                            String temp = "t"+(currentTemp++);
-                            cod3D.append("\n"+temp+" = "+partesExpr1[1]+" "+opl +" "+partesExpr2[1]);
-                            RESULT = partesExpr1[0]+opl+partesExpr2[0]+"::"+temp;
+                            if (partesExpr2[2].equals(partesExpr1[2])) {
+                            String temp = "t" + (currentTemp++);
+                            cod3D.append("\n" + temp + " = " + partesExpr1[1] + " " + opl + " " + partesExpr2[1]);
+                            RESULT = partesExpr1[0] + opl + partesExpr2[0] + "::" + temp + "::" + partesExpr2[2];
+                            } else {
+                            report_semantic_error("Operación invalida", e2);
+                            }
                      :}
               |  NOT expr_log:el
                      {:
                             String[] partesExpr = el.toString().split("::");
                             String temp = "t"+(currentTemp++);
                             cod3D.append("\n"+temp+" = NOT "+partesExpr[1]);
-                            RESULT = "!"+partesExpr[0]+"::"+temp;//partesExpr[2]
+                            RESULT = "!"+partesExpr[0]+"::"+temp + "::" + partesExpr[2];
                      :};
 
 expr_bin ::=     term:t {:RESULT = t;:}
@@ -465,9 +494,13 @@ expr_bin ::=     term:t {:RESULT = t;:}
                      {:
                             String[] partesExpr1 = e1.toString().split("::");
                             String[] partesExpr2 = e2.toString().split("::");
-                            String temp = "t"+(currentTemp++);
-                            cod3D.append("\n"+temp+" = "+partesExpr1[1]+" "+opb+" "+partesExpr2[1]);
-                            RESULT = partesExpr1[0]+opb+partesExpr2[0]+"::"+temp;
+                            if (partesExpr2[2].equals(partesExpr1[2])) {
+                            String temp = "t" + (currentTemp++);
+                            cod3D.append("\n" + temp + " = " + partesExpr1[1] + " " + opb + " " + partesExpr2[1]);
+                            RESULT = partesExpr1[0] + opb + partesExpr2[0] + "::" + temp + "::" + partesExpr2[2];
+                            } else {
+                            report_semantic_error("Operación invalida", e2);
+                            }
                      :};
 
 term ::=  factor:f {:RESULT = f;:}
@@ -475,19 +508,14 @@ term ::=  factor:f {:RESULT = f;:}
               {:
                      String[] partesExpr1 = e1.toString().split("::");
                      String[] partesExpr2 = e2.toString().split("::");
-                     String temp = "t"+(currentTemp++);
-                     cod3D.append("\n"+temp+" = "+partesExpr1[1]+" "+opm+" "+partesExpr2[1]);
-                     RESULT = partesExpr1[0]+opm+partesExpr2[0]+"::"+temp;
+                     if (partesExpr2[2].equals(partesExpr1[2])) {
+                     String temp = "t" + (currentTemp++);
+                     cod3D.append("\n" + temp + " = " + partesExpr1[1] + " " + opm + " " + partesExpr2[1]);
+                     RESULT = partesExpr1[0] + opm + partesExpr2[0] + "::" + temp + "::" + partesExpr2[2];
+                     } else {
+                     report_semantic_error("Operación invalida", e2);
+                     }
               :};
-
-/***
-                     if(partesExpr2[2].equales(partesExpr1[2])){
-                            String temp = "t"+(currentTemp++);
-                            cod3D.append("\n"+temp+" = "+partesExpr1[1]+" "+opm+" "+partesExpr2[1]);
-                            RESULT = partesExpr1[0]+opm+partesExpr2[0]+"::"+temp::partesExpr2[2];
-                     }else{
-                            report_semantic_error("error",e2)
-*/
 
 factor ::=     INTEGER_LITERAL:intL      
               {:
@@ -499,31 +527,31 @@ factor ::=     INTEGER_LITERAL:intL
               {:
               String temp = "t" + (currentTemp++);
               cod3D.append("\n" + temp + " = " + floatL);
-              RESULT = floatL.toString() + "::" + temp;
+              RESULT = floatL.toString() + "::" + temp+"::float";
               :}
               |  TRUE:trueL                
               {:
               String temp = "t" + (currentTemp++);
               cod3D.append("\n" + temp + " = " + trueL);
-              RESULT = trueL.toString() + "::" + temp;
+              RESULT = trueL.toString() + "::" + temp+"::bool";
               :}
               |  FALSE:falseL            
               {:
               String temp = "t" + (currentTemp++);
               cod3D.append("\n" + temp + " = " + falseL);
-              RESULT = falseL.toString() + "::" + temp;
+              RESULT = falseL.toString() + "::" + temp+"::bool";
               :}
               |  CHAR_LITERAL:charL        
               {:
               String temp = "t" + (currentTemp++);
               cod3D.append("\n" + temp + " = " + charL);
-              RESULT = charL.toString() + "::" + temp;
+              RESULT = charL.toString() + "::" + temp+"::char";
               :}
               |  STRING_LITERAL:stringL    
               {:
               String temp = "t" + (currentTemp++);
               cod3D.append("\n" + temp + " = " + stringL);
-              RESULT = stringL.toString() + "::" + temp;
+              RESULT = stringL.toString() + "::" + temp+"::string";
               :}
               |  IDENTIFIER:id             
               {:
