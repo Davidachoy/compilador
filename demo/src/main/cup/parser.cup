@@ -371,7 +371,6 @@ Array_expr ::= IDENTIFIER:id LBRACKET expr:e RBRACKET
                      if (info == null) {
                             report_semantic_error("Array no definido: " + id.toString(), id);
                      }
-
                      RESULT= id+"::"+temp+"::"+info.getType();
               :}
 ;
