@@ -13,6 +13,12 @@ action code {:
        StringBuffer cod3D = new StringBuffer();
        int currentTemp = 1;
        int currentLabel = 1;
+
+
+
+
+
+
        int currentIf = 1;
        int currentFor = 1;
        int currentWhile = 1;
@@ -259,7 +265,6 @@ Assign ::=       IDENTIFIER:id EQ expr:e
                      info.setValue(e);
   
             }
-           
                      :}
               |  IDENTIFIER EQ ReadFunction
               |  IDENTIFIER EQ PrintFunction;
@@ -384,11 +389,25 @@ For_Structure ::=    FOR
                      DOLAR expr:e
                      {:
                             String[] partesExpr1 = e.toString().split("::");
-                            cod3D.append("\nif "+partesExpr1[1]+" goto L"+currentLabel++);
+                            cod3D.append("\nif "+partesExpr1[1]+" goto for_"+currentFor+"_bloque");
                             cod3D.append("\ngoto for_"+currentFor+"_end");
-                            cod3D.append("\nfor_"+currentFor+"_alter");
+                            cod3D.append("\nfor_"+currentFor+"_alter:");
                      :}
-                     DOLAR inc_for RPAREN LBRACE  StatementList RBRACE {: symbolTable.popScope(); :} ;
+                     DOLAR inc_for RPAREN LBRACE 
+                     {:
+                            cod3D.append("\ngoto for_"+currentFor+"_condition:");
+                            cod3D.append("\nfor_"+currentFor+"_bloque:");
+                     :}
+
+                     StatementList RBRACE 
+                     {:     
+                            symbolTable.popScope();
+                            int tempLabel = currentFor;
+                            cod3D.append("\ngoto for_"+currentFor+++"_alter");
+                            cod3D.append("\nfor_"+tempLabel+"_end:");
+
+
+                     :} ;
 
 inc_for  ::=     factor;
 
@@ -568,13 +587,21 @@ factor ::=     INTEGER_LITERAL:intL
               |  op_unario:opu factor:f
               {:
                      String temp = "t" + (currentTemp++);
+
                      String[] partesExpr1 = f.toString().split("::");
-                     cod3D.append("\n" + temp + " = " + partesExpr1[0]);
-                     String tempTemp = temp;
-                     temp = "t" + (currentTemp++);
+
                      if (opu.toString().equals("++")){
-                            cod3D.append("\n" + temp + " = " + tempTemp+" + 1");
+                            cod3D.append("\n" + temp + " = " + partesExpr1[1]+" + 1");
+                     }else if (opu.toString().equals("--")) {
+                            cod3D.append("\n" + temp + " = " + partesExpr1[1]+" - 1");  
+                     }else{
+                            cod3D.append("\n" + temp + " = -" + partesExpr1[1]);  
                      }
+
+                     cod3D.append("\n" + partesExpr1[0] + " = " +  (temp));  
+
+
+                     
 
               :}
 
