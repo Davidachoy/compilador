@@ -14,7 +14,6 @@ action code {:
        StringBuffer cod3D = new StringBuffer();
        int currentTemp = 1;
        int currentLabel = 1;
-
        int currentIf = 1;
        int currentFor = 1;
        int currentWhile = 1;
@@ -37,6 +36,14 @@ parser code {:
        private SymbolTable symbolTable = new SymbolTable();
        private String endIfLabel;
        private List<ParameterInfo> currentParameters = new ArrayList<>();
+       private List<ParameterInfo> callParameters = new ArrayList<>();
+
+
+       public void validateParamSizeType(SymbolInfo info){
+              System.out.println(info.getType());
+              List<ParameterInfo> parameters = info.getParameters();
+
+       }
 
        public void report_error(String message, Object info) {
               StringBuilder m = new StringBuilder("Error de sintaxis");
@@ -174,6 +181,7 @@ Function ::= Function_id:id LPAREN Parameters
                             info.setType("function");
                             info.setFunctionType(((FunctionID)id).getType());
                             info.setParameters(new ArrayList<>(currentParameters));
+                            info.setIdentifier(((FunctionID)id).getId());
                             symbolTable.setCurrentFunction(info);
                             symbolTable.addSymbol(((FunctionID)id).getId(),info); 
 
@@ -226,7 +234,10 @@ Statement   ::= error_until_dolar
               | RETURN expr:e DOLAR
               {:
                      SymbolInfo info =symbolTable.getCurrentFunction();
-                     System.out.println(info.getFunctionType());
+                     String[] partesExpr = e.toString().split("::");
+                     if(!info.getFunctionType().equals(partesExpr[2])){
+                            report_semantic_error("Tipo de retorno incorrecto para la funcion: " + info.getIdentifier(), e);      
+                     }
 
               :}
               | ReadFunction DOLAR
@@ -241,6 +252,8 @@ Statement   ::= error_until_dolar
                             report_semantic_error("Funcion no definida: " + id, id);
                      }else{
                             RESULT = id;
+                            validateParamSizeType(info);
+
                      }
                     
 
@@ -250,14 +263,29 @@ Statement   ::= error_until_dolar
 
 
 FunctionCall ::=        IDENTIFIER:id LPAREN RPAREN {: RESULT = id;:}
-                     |  IDENTIFIER:id LPAREN InvocationParams RPAREN{: RESULT = id;:};
+                     |  IDENTIFIER:id LPAREN InvocationParams RPAREN 
+                     {: 
+                            RESULT = id;
+                     :};
 
 InvocationParams ::=    InvocationParams COMMA InvParam
                      |  InvParam;
 
 
-InvParam ::=     Literals
-              |  IDENTIFIER;
+InvParam ::=     Literals:l 
+              {:
+                     String[] partesExpr = l.toString().split("::");
+                     currentParameters.add(new ParameterInfo(partesExpr[0],partesExpr[1]));
+              :}
+              |  IDENTIFIER:id 
+              {:
+                     SymbolInfo info = symbolTable.getSymbol(id.toString());
+                     if (info == null){
+                            report_semantic_error("Identificador no definido: " + id, id);
+                     }else{
+                            currentParameters.add(new ParameterInfo(id.toString(),info.getType()));
+                     }
+              :};
 
 //arrays
 Array_declaration ::= Type IDENTIFIER LBRACKET expr RBRACKET;
@@ -297,6 +325,7 @@ Declaration::=   Type:t IDENTIFIER:id
                      cod3D.append("\ndata_"+((Type)t).getTypeName()+" "+id.toString());
                      SymbolInfo info = new SymbolInfo();
                      info.setType(((Type)t).getTypeName());
+                     info.setIdentifier(id.toString());
                      symbolTable.addSymbol(id.toString(), info);
                      RESULT = new Declaration((Type)t, id.toString());
                 } else {
@@ -312,11 +341,12 @@ Declaration::=   Type:t IDENTIFIER:id
                      report_semantic_error("Declaración incorrecta: " + id.toString(), id);
               }
                 if (symbolTable.getSymbol(id.toString()) == null) {
-                    SymbolInfo info = new SymbolInfo();
-                    info.setType(((Type)t).getTypeName());
-                    info.setValue(e);
-                    symbolTable.addSymbol(id.toString(), info);
-                    RESULT = new Declaration((Type)t, id.toString());
+                     SymbolInfo info = new SymbolInfo();
+                     info.setType(((Type)t).getTypeName());
+                     info.setValue(e);
+                     info.setIdentifier(id.toString());
+                     symbolTable.addSymbol(id.toString(), info);
+                     RESULT = new Declaration((Type)t, id.toString());
                 } else {
                     report_semantic_error("Variable ya definida: " + id.toString(), id);
                 }
@@ -617,7 +647,7 @@ factor ::=     INTEGER_LITERAL:intL
               }else{
                      String temp = "t" + (currentTemp++);
                      cod3D.append("\n" + temp + " = " + id);
-                     RESULT = id + "::" + temp;;
+                     RESULT = id + "::" + temp+"::" + info.getType();
               }
 
               :}
@@ -685,12 +715,12 @@ op_unario ::=    INCREMENT  {:RESULT = "++";:}
 
 //literals
 
-Literals::=      INTEGER_LITERAL
-              |  FLOAT_LITERAL
-              |  TRUE
-              |  FALSE
-              |  CHAR_LITERAL
-              |  STRING_LITERAL;
+Literals::=      INTEGER_LITERAL:intL     {:RESULT= intL+"::int";:}
+              |  FLOAT_LITERAL:floatL     {:RESULT= floatL+"::float";:}
+              |  TRUE:trueL               {:RESULT= trueL+"::true";:}
+              |  FALSE:falseL              {:RESULT= falseL+"::false";:}
+              |  CHAR_LITERAL:charL       {:RESULT= charL+"::char";:}
+              |  STRING_LITERAL:stringL   {:RESULT= stringL+"::string";:};
 
 
 

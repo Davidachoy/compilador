@@ -11,6 +11,10 @@ public class ParameterInfo {
 
     private String type;
 
+    public ParameterInfo(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }

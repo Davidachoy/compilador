@@ -31,7 +31,7 @@ public class SymbolInfo {
 
     }
     public String getIdentifier() {
-        return identifier;
+        return this.identifier;
     }
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
