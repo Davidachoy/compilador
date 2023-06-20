@@ -12,7 +12,7 @@ import java.io.IOException;
 public class App {
     public static void main(String[] args) {
 
-        String archivo = "prueba.txt";
+        String archivo = "C:/Users/javie/Desktop/ProyectoIICompiladores/compilador/demo/prueba.txt";
         
         try {
             BufferedReader reader = new BufferedReader(new FileReader(archivo));
@@ -59,8 +59,8 @@ public class App {
 
             reader.close();
 
-            String codigoMIPS = generacionMips.convertirTresDireccionesAMIPS(archivo);
-            writeToFile(codigoMIPS,"MIPS");
+            String codigoMIPS = generacionMips.convertToMIPS("C:/Users/javie/Desktop/ProyectoIICompiladores/Codigo3D.txt");
+            writeToFile(codigoMIPS,"MIPS.txt");
 
         } catch(Exception e) {
             System.out.println("Ocurrió un error durante el análisis: " + e.getMessage());
