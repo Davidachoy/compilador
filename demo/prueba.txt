@@ -1,5 +1,31 @@
+
 int main(){
     int a = 1$
     int b = 2$
     int c = a + b$
+}
+
+int function1 (int a, int b, float x){
+    if(5<5){
+        int prueba$
+        prueba = 6$
+    }
+    int myArray [6]$
+    myArray[3] = 10$
+    float j = myArray[3]$
+    
+    return 65 $
+}
+
+float lol (int a){
+
+    return 5.5$
+}
+
+int function2 (int a, int b, float x){
+
+    int j = function1(a,b,x)$
+    lol(a)$
+
+    return 65 $
 }

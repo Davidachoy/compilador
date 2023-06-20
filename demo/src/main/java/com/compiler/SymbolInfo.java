@@ -8,27 +8,29 @@ public class SymbolInfo {
     private String functionType;
     private Object value;
     private String valueType;
+    private String tempValue;
     
+    public String getTempValue() {
+        return tempValue;
+    }
+    public void setTempValue(String tempValue) {
+        this.tempValue = tempValue;
+    }
     private List<ParameterInfo> parameters; // nuevo campo
-
     public String getFunctionType() {
         return functionType;
     }
     public void setFunctionType(String functionType) {
         this.functionType = functionType;
     }
-    
-
     public List<ParameterInfo> getParameters() {
         return parameters;
     }
     public void setParameters(List<ParameterInfo> parameters) {
         this.parameters = parameters;
-
     }
     public SymbolInfo() {
         this.parameters = new ArrayList<>();
-
     }
     public String getIdentifier() {
         return this.identifier;
@@ -53,9 +55,6 @@ public class SymbolInfo {
     }
     public void setValueType(String valueType) {
         this.valueType = valueType;
-    }
-
-
-    
+    }  
 }
 
