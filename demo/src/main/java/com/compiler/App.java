@@ -57,10 +57,11 @@ public class App {
             writeToFile(cod3DOutput, "Codigo3D.txt");
             writeToFile(sintactiOutput, "Analisis.txt");
 
-            int prueba12 = 5 + 2;
-
-
             reader.close();
+
+            String codigoMIPS = generacionMips.convertirTresDireccionesAMIPS(archivo);
+            writeToFile(codigoMIPS,"MIPS");
+
         } catch(Exception e) {
             System.out.println("Ocurrió un error durante el análisis: " + e.getMessage());
         }
